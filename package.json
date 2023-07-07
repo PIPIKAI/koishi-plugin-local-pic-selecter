@@ -1,7 +1,7 @@
 {
   "name": "koishi-plugin-local-pic-selecter",
-  "description": "随机选择本地图片输出",
-  "version": "0.0.1",
+  "description": "随机选择本地图片输出(基于文件夹名)",
+  "version": "1.0.0",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "files": [
@@ -10,10 +10,21 @@
   ],
   "license": "MIT",
   "scripts": {},
+  "contributors": [
+    "Pipikai <z1652091948@outlook.com>"
+  ],
+  "repository": {                           
+    "type": "git",
+    "url": "git+https://github.com/PIPIKAI/koishi-plugin-local-pic-selecter"
+  },
   "keywords": [
     "chatbot",
     "koishi",
-    "plugin"
+    "plugin",
+    "image",
+    "floder",
+    "local image",
+    "random"
   ],
   "peerDependencies": {
     "koishi": "^4.13.6"
