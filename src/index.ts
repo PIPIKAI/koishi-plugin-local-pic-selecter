@@ -1,9 +1,23 @@
 import { count } from 'console'
-import { Context, h, Schema } from 'koishi'
+import { Context, h, Schema,Logger } from 'koishi'
 import { ImagerPicker } from './imagepicker'
 import { pathToFileURL } from 'url'
 import { resolve, join } from 'path'
 export const name = 'local-pic-selecter'
+import { promises as fs } from 'fs'
+
+async function readImageAsBuffer(imagePath: string): Promise<Buffer> {
+  try {
+      const data = await fs.readFile(imagePath);
+      return data;
+  } catch (err) {
+      console.error('Error reading the image file:', err);
+      throw err;
+  }
+}
+
+const logger = new Logger("pick-selector");
+
 export interface Config {
   basePath: string
   postfixs: Array<string>
@@ -20,7 +34,7 @@ export const Config: Schema<Config> = Schema.object({
 export function apply(ctx: Context, config: Config) {
   for (const postfix of config.postfixs) {
     ctx.command(`${postfix} [count:number]`)
-      .action((_, count) => {
+      .action(async ({ session, options }, count) => {
         if (!count) {
           count = 1
         }
@@ -28,12 +42,11 @@ export function apply(ctx: Context, config: Config) {
           count = config.maxout
         }
         let pickeed = ImagerPicker(config.basePath, postfix, count)
-        let res = []
         for (const fname of pickeed) {
           const p = join(config.basePath, postfix, fname)
-          res.push(h.image(pathToFileURL(p).href))
+          const imageBuffer = await readImageAsBuffer(p);
+          session.send(h.image( imageBuffer , "image/" + fname.split('.')[-1]))
         }
-        return res
       }
       )
   }
